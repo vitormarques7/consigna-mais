@@ -26,7 +26,7 @@ export function validCnpj(value: string): boolean {
 }
 const documentText = z.string().transform((value) => value.replace(/[.\-/\s]/g, '').toUpperCase());
 const money = z
-  .number()
+  .number({ invalid_type_error: 'Informe um valor monetário válido.' })
   .int('Use valores com até duas casas decimais.')
   .positive('Informe um valor maior que zero.')
   .max(100_000_000, 'O limite desta demonstração é R$ 1 milhão.');
@@ -37,7 +37,7 @@ export const simulationInputSchema = z
     cpf: documentText.refine(validCpf, 'Informe um CPF válido.'),
     employerCnpj: documentText.refine(validCnpj, 'Informe um CNPJ válido.'),
     salaryCents: money,
-    amountCents: money,
+    amountCents: money.min(10_000, 'O valor mínimo desta demonstração é R$ 100,00.'),
     installments: z.union([z.literal(12), z.literal(24), z.literal(36)], {
       errorMap: () => ({ message: 'Escolha 12, 24 ou 36 meses.' }),
     }),

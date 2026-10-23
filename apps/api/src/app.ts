@@ -19,12 +19,10 @@ export function createApp(banks: BankAdapter[], log: (event: Event) => void = ()
     res.setHeader('Cache-Control', 'no-store');
     const input = simulationInputSchema.safeParse(req.body);
     if (!input.success) {
-      res
-        .status(400)
-        .json({
-          message: 'Revise os campos informados.',
-          errors: input.error.flatten().fieldErrors,
-        });
+      res.status(400).json({
+        message: 'Revise os campos informados.',
+        errors: input.error.flatten().fieldErrors,
+      });
       return;
     }
     const requestId = randomUUID();
@@ -56,16 +54,14 @@ export function createApp(banks: BankAdapter[], log: (event: Event) => void = ()
   const errorHandler: ErrorRequestHandler = (error: unknown, _req, res, _next) => {
     const status =
       typeof error === 'object' && error !== null && 'status' in error ? error.status : 500;
-    res
-      .status(status === 400 ? 400 : status === 413 ? 413 : 500)
-      .json({
-        message:
-          status === 400
-            ? 'JSON inválido.'
-            : status === 413
-              ? 'Requisição muito grande.'
-              : 'Não foi possível concluir a simulação.',
-      });
+    res.status(status === 400 ? 400 : status === 413 ? 413 : 500).json({
+      message:
+        status === 400
+          ? 'JSON inválido.'
+          : status === 413
+            ? 'Requisição muito grande.'
+            : 'Não foi possível concluir a simulação.',
+    });
   };
   app.use(errorHandler);
   return app;

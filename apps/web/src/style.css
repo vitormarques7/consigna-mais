@@ -594,6 +594,7 @@ input[aria-invalid='true'] {
   color: #71678f;
   width: 31px;
   height: 31px;
+  flex-shrink: 0;
   border-radius: 9px;
 }
 .status {
@@ -621,6 +622,7 @@ input[aria-invalid='true'] {
   letter-spacing: -1px;
   font-weight: 700;
   margin: 16px 0;
+  overflow-wrap: anywhere;
 }
 .payment span {
   font-size: 11px;
@@ -801,6 +803,7 @@ footer > span {
     padding: 20px;
   }
   .fields {
+    grid-template-columns: 1fr;
     gap: 17px 12px;
   }
 }
@@ -810,7 +813,10 @@ footer > span {
   }
   .site-header {
     padding: 0 20px;
-    height: 75px;
+    min-height: 75px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 0 12px;
   }
   .brand {
     font-size: 21px;
@@ -826,6 +832,14 @@ footer > span {
   nav a {
     font-size: 11px;
   }
+  .site-header a {
+    min-height: 44px;
+  }
+  input,
+  select {
+    font-size: 16px;
+    min-height: 48px;
+  }
   .hero {
     display: block;
     min-height: auto;
@@ -835,7 +849,7 @@ footer > span {
     max-width: 540px;
   }
   h1 {
-    font-size: 40px;
+    font-size: clamp(32px, 8.5vw, 40px);
     letter-spacing: -1.8px;
   }
   .hero-description {
@@ -858,6 +872,7 @@ footer > span {
   .example-button {
     font-size: 12px;
     padding: 11px 13px;
+    min-height: 44px;
   }
   .simulation-grid {
     grid-template-columns: 1fr;

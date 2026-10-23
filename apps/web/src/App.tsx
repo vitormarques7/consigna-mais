@@ -80,6 +80,14 @@ export function App() {
     if (!input.success) {
       setErrors(input.error.flatten().fieldErrors);
       setAnnouncement('Revise os campos indicados.');
+      const firstError = input.error.issues[0]?.path[0];
+      const id =
+        firstError === 'salaryCents'
+          ? 'salary'
+          : firstError === 'amountCents'
+            ? 'amount'
+            : String(firstError);
+      requestAnimationFrame(() => document.getElementById(id)?.focus());
       return;
     }
     setErrors({});
@@ -128,6 +136,7 @@ export function App() {
           placeholder={placeholder}
           type={options.type ?? 'text'}
           inputMode={options.inputMode}
+          autoComplete={key === 'name' ? 'name' : key === 'email' ? 'email' : 'off'}
           required
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${key}-error` : undefined}

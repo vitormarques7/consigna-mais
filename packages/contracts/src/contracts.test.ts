@@ -29,8 +29,19 @@ describe('input validation', () => {
     { email: 'invalid' },
     { name: '' },
     { amountCents: Infinity },
+    { amountCents: 9999 },
+    { amountCents: NaN },
     { extra: true },
   ])('rejects invalid input %j', (change) => {
     expect(simulationInputSchema.safeParse({ ...exampleInput, ...change }).success).toBe(false);
+  });
+  it('accepts the minimum loan and explains invalid currency in Portuguese', () => {
+    expect(simulationInputSchema.safeParse({ ...exampleInput, amountCents: 10000 }).success).toBe(
+      true,
+    );
+    const result = simulationInputSchema.safeParse({ ...exampleInput, salaryCents: NaN });
+    expect(!result.success && result.error.flatten().fieldErrors.salaryCents).toEqual([
+      'Informe um valor monetário válido.',
+    ]);
   });
 });

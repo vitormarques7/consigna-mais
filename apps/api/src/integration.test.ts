@@ -62,6 +62,25 @@ describe('simulation through actual HTTP bank endpoints', () => {
       .send('{')
       .expect(400);
   });
+  it('rejects loans below the minimum before consulting banks', async () => {
+    const { app, events } = await setup();
+    const response = await request(app)
+      .post('/api/simulations')
+      .send({ ...exampleInput, amountCents: 1 })
+      .expect(400);
+    expect(response.body.errors.amountCents).toEqual([
+      'O valor mínimo desta demonstração é R$ 100,00.',
+    ]);
+    expect(events).toHaveLength(0);
+  });
+  it('rejects oversized requests without exposing internal errors', async () => {
+    const { app } = await setup();
+    const response = await request(app)
+      .post('/api/simulations')
+      .send({ ...exampleInput, name: 'a'.repeat(17000) })
+      .expect(413);
+    expect(response.body).toEqual({ message: 'Requisição muito grande.' });
+  });
   it('returns business rejection rather than technical failure', async () => {
     const { app } = await setup();
     const response = await request(app)
