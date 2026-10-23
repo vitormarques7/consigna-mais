@@ -6,7 +6,7 @@ Simulador educacional de empréstimo consignado: uma interface em português con
 
 ## Executar sem Docker
 
-Pré-requisito: **Node.js 24 LTS** recomendado (mínimo 20.19), com npm. Se usa nvm: `nvm use`.
+Pré-requisito: **Node.js 24 LTS**, com npm. Se usa nvm: `nvm use`.
 
 ```bash
 npm ci
@@ -30,6 +30,18 @@ docker compose down
 ```
 
 A primeira execução baixa dependências e imagens, portanto exige internet. Depois da instalação, a lógica funciona localmente. A fonte visual usa Google Fonts com fontes locais de fallback caso esteja offline.
+
+## Deploy na Vercel
+
+Importe este repositório como **um único projeto**, usando a branch de produção `main` e **Root Directory na raiz do repositório** (não `apps/web`). O arquivo `vercel.json` configura Vite, instalação `npm ci`, build `npm run build` e saída `apps/web/dist`. Selecione **Node.js 24.x** nas configurações do projeto.
+
+O frontend é estático e `/api/*` é atendido por uma função Node.js que reutiliza a API Express e os mocks em `/api/mock-banks`. A função não abre uma porta. Os adaptadores continuam consultando os dois bancos por HTTP, agora no endereço do próprio deployment. Não é necessário publicar três projetos nem executar Docker na Vercel.
+
+Por padrão, não configure `BANK_BASE_URL`: a aplicação usa `https://<VERCEL_URL>/api/mock-banks`, com a variável de sistema fornecida pela Vercel. As variáveis `BANK_A_MODE`, `BANK_B_MODE` e `BANK_TIMEOUT_MS` continuam opcionais. Para demonstrar falhas, use um deployment de Preview e restaure os modos para `normal` antes da avaliação.
+
+Se o Preview estiver protegido, crie um segredo em **Settings → Deployment Protection → Protection Bypass for Automation**, selecionando-o para preencher `VERCEL_AUTOMATION_BYPASS_SECRET`, e faça um novo deploy. O servidor envia esse segredo nas consultas internas apenas quando o destino é a origem do próprio deployment. Ele não é enviado ao frontend, incluído nos logs ou encaminhado para um `BANK_BASE_URL` externo. Consulte a [documentação de previews protegidos](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation).
+
+Após publicar, confira `/api/health`, o preenchimento por exemplo e a simulação. Verifique também que o avaliador consegue abrir a URL de produção sem entrar na sua conta. A conferência da URL pública depende do deploy realizado pelo autor.
 
 ## Arquitetura e decisões
 
@@ -78,7 +90,7 @@ Resultados: aprovado / reprovado / indisponível
 }
 ```
 
-Prazos aceitos: 12, 24 e 36 meses. Salário e valor solicitado devem ser positivos, inteiros em centavos e limitados a R$ 1 milhão nesta demonstração.
+Prazos aceitos: 12, 24 e 36 meses. Os valores devem ser inteiros em centavos e limitados a R$ 1 milhão nesta demonstração. O salário deve ser positivo; o empréstimo mínimo é **R$ 100,00**, evitando parcelas arredondadas para zero. Esse limite é uma escolha da demonstração.
 
 A resposta contém `requestId` e dois `results`, cada um com `bankId`, `bankName`, `status` e `message`. Um resultado `approved` também contém `offer` com `installmentCents`, `installments`, `monthlyRatePercent` e `totalCents`. Os demais estados são `rejected` e `unavailable`.
 
@@ -148,6 +160,10 @@ Os testes de integração sobem os bancos em portas efêmeras e fazem chamadas H
 
 O GitHub Actions executa a mesma verificação em Node 24 a cada push e pull request. Consulte [o roteiro de revisão](docs/roteiro.md) para a verificação manual e preparação da apresentação.
 
+O [registro de validação](docs/validacao.md) descreve as verificações realizadas, evidências de smartphone/desktop e limites da revisão.
+
+A suíte também verifica a entrada serverless, as chamadas HTTP entre rotas do mesmo deployment e o isolamento do segredo de Preview. A interface adapta formulário e resultados para uma coluna em smartphones, usa campos de 16 px para evitar zoom automático no iOS e mantém controles de toque com pelo menos 44 px.
+
 ## Propostas implementadas
 
 ### 1. Resultados independentes e espera limitada
@@ -182,6 +198,6 @@ O GitHub Actions executa a mesma verificação em Node 24 a cada push e pull req
 
 ## Limitações conscientes
 
-Sem histórico, login, contratação ou consulta cadastral. A API devolve os resultados consolidados; não há streaming. O MVP foi preparado para avaliação local: antes de expô-lo publicamente, seriam necessárias proteções contra abuso, revisão de segurança e políticas para dados reais. A interface não apresenta a taxa fictícia como CET. Não há nova tentativa automática nesta versão.
+Sem histórico, login, contratação ou consulta cadastral. A API devolve os resultados consolidados; não há streaming. O deployment público é uma demonstração com dados fictícios, sem proteção de aplicação contra abuso. Antes de usar dados reais, seriam necessárias revisão de segurança, políticas de dados e controles operacionais. A interface não apresenta a taxa fictícia como CET. Não há nova tentativa automática nesta versão. Inicializações de funções na Vercel podem aumentar a latência; consultas que ultrapassam o timeout aparecem como indisponíveis.
 
 O desenvolvimento usa assistência de IA, com decisões, comportamento e testes documentados para revisão e compreensão do autor.
