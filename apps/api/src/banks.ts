@@ -21,7 +21,11 @@ const betaSchema = z.discriminatedUnion('decision', [
   }),
   z.object({ decision: z.literal('DECLINED'), code: z.literal('INCOME_LIMIT') }),
 ]);
-export function createBankAdapters(baseUrl: string, timeoutMs = 3000): BankAdapter[] {
+export function createBankAdapters(
+  baseUrl: string,
+  timeoutMs = 3000,
+  headers: Record<string, string> = {},
+): BankAdapter[] {
   return (['a', 'b'] as const).map((bank) => {
     const id = `bank-${bank}`;
     const name = bank === 'a' ? 'Banco Aurora' : 'Banco Horizonte';
@@ -32,7 +36,7 @@ export function createBankAdapters(baseUrl: string, timeoutMs = 3000): BankAdapt
         // fetch cancellation covers headers AND body parsing, including a stalled body.
         const response = await fetch(`${baseUrl}/${id}/simulate`, {
           method: 'POST',
-          headers: { 'content-type': 'application/json' },
+          headers: { ...headers, 'content-type': 'application/json' },
           body: JSON.stringify(input),
           signal: AbortSignal.timeout(timeoutMs),
         });

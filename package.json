@@ -8,16 +8,16 @@
     "packages/*"
   ],
   "engines": {
-    "node": ">=20.19.0"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "npm run build -w @consigna/contracts && concurrently -k -n bancos,api,web -c yellow,cyan,magenta \"npm run dev -w @consigna/bank-mocks\" \"npm run dev -w @consigna/api\" \"npm run dev -w @consigna/web\"",
     "build": "npm run build -w @consigna/contracts && npm run build -w @consigna/bank-mocks && npm run build -w @consigna/api && npm run build -w @consigna/web",
-    "typecheck": "npm run build -w @consigna/contracts && npm run typecheck --workspaces --if-present",
+    "typecheck": "npm run build -w @consigna/contracts && npm run typecheck --workspaces --if-present && tsc -p tsconfig.vercel.json",
     "test": "npm run build -w @consigna/contracts && vitest run",
-    "lint": "eslint apps packages eslint.config.js",
+    "lint": "eslint apps packages api deploy eslint.config.js",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
-    "format": "prettier --write apps packages docs README.md package.json tsconfig.base.json eslint.config.js compose.yaml .github .prettierrc.json"
+    "format": "prettier --write apps packages api deploy docs README.md package.json tsconfig*.json vercel.json eslint.config.js compose.yaml .github .prettierrc.json"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
