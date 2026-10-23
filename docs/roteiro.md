@@ -1,5 +1,7 @@
 # Roteiro de revisão e apresentação
 
+Comece pelo [guia de estudo](entenda-o-projeto.md), que explica os conceitos e responde às questões com exemplos do código.
+
 ## Verificação manual
 
 1. Inicie pelo README e abra a interface em larguras de 320, 390, 430, 768 e 1440 px. Confira cabeçalho, campos, resultados e rodapé sem rolagem horizontal. Em smartphone, campos devem ter fonte de 16 px e controles de toque de pelo menos 44 px.
@@ -14,7 +16,7 @@
 10. Execute `npm run check`. Revise os logs: apenas requestId, bankId, status e durationMs.
 11. Execute também por Docker e abra localhost:8080. Ao finalizar, use `docker compose down`.
 12. Informe empréstimo de R$ 99,99: confira a mensagem de mínimo R$ 100,00 e o foco no campo. Repita com valor monetário inválido e CPF inválido.
-13. Após o deploy na Vercel, confira `/api/health` e uma simulação na URL de produção. Em Preview protegido, configure o segredo de automação conforme o README e confira as chamadas internas. Acesse a produção também em janela anônima e em smartphone.
+13. Após o deploy na Vercel, confira `/api/health` e uma simulação na URL de produção. Se o endereço interno do deployment estiver protegido, configure o segredo de automação conforme o README e confira as chamadas internas. Acesse a produção também em janela anônima e em smartphone.
 
 ## Apresentação de cinco minutos
 
@@ -36,6 +38,6 @@
 - Por que o exemplo não usa persistência, login ou retries?
 - O que mudaria antes de conectar bancos reais ou expor a aplicação publicamente?
 - Como a mesma API funciona em três processos locais e em uma função na Vercel?
-- Por que as chamadas internas de um Preview protegido precisam do segredo de automação?
+- Por que as chamadas internas de um deployment protegido precisam do segredo de automação?
 
 Os testes e a execução devem sustentar cada afirmação do README. Registre explicitamente qualquer verificação que não pôde ser realizada no ambiente utilizado.
