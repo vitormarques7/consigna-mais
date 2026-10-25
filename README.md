@@ -72,6 +72,7 @@ Resultados: aprovado / reprovado / indisponível
 - Chamadas paralelas, com cancelamento após **3 segundos por banco**, inclusive se o corpo da resposta travar. Falha de rede, erro HTTP ou contrato inválido afeta somente o respectivo resultado.
 - Reprovação é uma decisão do simulador. Indisponibilidade é uma falha técnica; a aplicação não confunde as duas.
 - CPF e CNPJ são strings, com normalização e validação de dígitos verificadores. CNPJ aceita letras nas primeiras 12 posições conforme o [algoritmo da Receita Federal](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj). Isso valida a estrutura, não comprova identidade ou cadastro.
+- CPF e CNPJ recebem pontuação durante a digitação com `react-imask`, que também cuida da edição e do cursor. O CNPJ mantém suporte a letras. Salário e valor solicitado usam separadores brasileiros e duas casas decimais ao sair do campo; colar valores com ou sem formatação preserva o valor em reais. As máscaras não substituem as validações do backend.
 - Valores da API são inteiros em centavos. A apresentação usa reais em pt-BR. Identificadores com zero inicial são preservados.
 - Sem banco de dados ou autenticação: a jornada solicitada é uma consulta imediata. Os dados ficam apenas em memória durante o processamento e no formulário aberto.
 - Logs estruturados registram identificador da consulta, banco, status e duração. Não registram CPF, CNPJ, nome, e-mail, salário ou payloads externos.

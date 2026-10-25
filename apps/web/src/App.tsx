@@ -1,4 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react';
+import { IMaskInput } from 'react-imask';
 import {
   ArrowDown,
   ArrowRight,
@@ -22,6 +23,7 @@ import {
   type SimulationResponse,
 } from '@consigna/contracts';
 import { toCents } from './money';
+import { cpfMask, cnpjMask, moneyMask, formatPastedMoney } from './input-masks';
 import { ResultCard } from './ResultCard';
 const initial = {
   name: '',
@@ -43,6 +45,7 @@ export function App() {
   const resultHeading = useRef<HTMLHeadingElement>(null);
   const pending = useRef(false);
   function update(key: keyof Fields, value: string) {
+    if (fields[key] === value) return;
     setFields((previous) => ({ ...previous, [key]: value }));
     setResult(null);
     setFailure('');
@@ -123,26 +126,51 @@ export function App() {
     options: { type?: string; inputMode?: 'email' | 'decimal' | 'numeric'; errorKey?: string } = {},
   ) {
     const error = errors[options.errorKey ?? key]?.[0];
+    const currency = key === 'salary' || key === 'amount';
+    const mask =
+      key === 'cpf' ? cpfMask : key === 'employerCnpj' ? cnpjMask : currency ? moneyMask : null;
+    const inputProps = {
+      id: key,
+      name: key,
+      value: fields[key],
+      placeholder,
+      inputMode: options.inputMode,
+      autoComplete: key === 'name' ? 'name' : key === 'email' ? 'email' : 'off',
+      required: true,
+      'aria-invalid': Boolean(error),
+      'aria-describedby': error ? `${key}-error` : undefined,
+      disabled: loading,
+    };
     return (
       <div className={`field ${key === 'name' ? 'full' : ''}`}>
         <label htmlFor={key}>
           {label} <span aria-hidden="true">*</span>
         </label>
-        <input
-          id={key}
-          name={key}
-          value={fields[key]}
-          onChange={(event) => update(key, event.target.value)}
-          placeholder={placeholder}
-          type={options.type ?? 'text'}
-          inputMode={options.inputMode}
-          autoComplete={key === 'name' ? 'name' : key === 'email' ? 'email' : 'off'}
-          required
-          aria-invalid={Boolean(error)}
-          aria-describedby={error ? `${key}-error` : undefined}
-          disabled={loading}
-          maxLength={key === 'name' ? 120 : key === 'email' ? 254 : 30}
-        />
+        {mask ? (
+          <IMaskInput
+            {...inputProps}
+            {...mask}
+            type="text"
+            unmask={false}
+            onAccept={(value) => update(key, value)}
+            onPaste={(event) => {
+              if (!currency) return;
+              const input = event.currentTarget;
+              // Partial pastes use the mask's normal selection/cursor behavior.
+              if (input.selectionStart !== 0 || input.selectionEnd !== input.value.length) return;
+              event.preventDefault();
+              const value = formatPastedMoney(event.clipboardData.getData('text'));
+              if (value !== null) update(key, value);
+            }}
+          />
+        ) : (
+          <input
+            {...inputProps}
+            type={options.type ?? 'text'}
+            onChange={(event) => update(key, event.target.value)}
+            maxLength={key === 'name' ? 120 : 254}
+          />
+        )}
         {error && (
           <span className="field-error" id={`${key}-error`}>
             {error}
