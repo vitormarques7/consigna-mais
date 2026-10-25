@@ -28,7 +28,7 @@ export function createBankAdapters(
 ): BankAdapter[] {
   return (['a', 'b'] as const).map((bank) => {
     const id = `bank-${bank}`;
-    const name = bank === 'a' ? 'Banco Aurora' : 'Banco Horizonte';
+    const name = bank === 'a' ? 'Bradesco' : 'Banco Santander';
     return {
       id,
       name,

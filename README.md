@@ -1,8 +1,8 @@
 # Consigna Mais
 
-Simulador educacional de empréstimo consignado: uma interface em português consulta dois bancos fictícios por HTTP, interpreta contratos diferentes e apresenta os resultados individualmente.
+Simulador educacional de empréstimo consignado: uma interface em português consulta duas APIs bancárias simuladas por HTTP, interpreta contratos diferentes e apresenta os resultados individualmente.
 
-**Todos os dados e critérios são fictícios. Não há contratação, persistência de dados pessoais ou integração com bancos reais.**
+**Todos os dados e critérios são fictícios. Não há contratação, persistência de dados pessoais ou integração com bancos reais. Os nomes Bradesco e Banco Santander são usados apenas para ilustrar a simulação, sem vínculo com essas instituições.**
 
 **Demonstração:** [consigna-mais.vercel.app](https://consigna-mais.vercel.app). Para testar, clique em **Usar dados de exemplo** e depois em **Comparar condições**.
 
@@ -11,7 +11,7 @@ Simulador educacional de empréstimo consignado: uma interface em português con
 | Pedido do desafio                               | Onde está atendido                                                                     |
 | ----------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Nome, e-mail, CPF, salário e CNPJ do empregador | Formulário e validação compartilhada; também solicitamos valor e prazo                 |
-| Pelo menos dois bancos simulados                | Aurora e Horizonte, consultados por HTTP com contratos diferentes                      |
+| Pelo menos dois bancos simulados                | Bradesco e Banco Santander, consultados por HTTP com contratos diferentes              |
 | Interpretar e consolidar respostas              | Adaptadores da API convertem decisões e unidades monetárias para um modelo comum       |
 | Resultado individual compreensível              | Cartão por banco: aprovado com condições, reprovado com motivo ou indisponível         |
 | Instruções de execução                          | Fluxos npm e Docker opcional abaixo; Node 24 e portas documentados                     |
@@ -53,8 +53,8 @@ Navegador (React)
     │ POST /api/simulations
     ▼
 API Express → valida entrada → consulta bancos em paralelo
-    ├── adaptador Aurora ──HTTP──→ /bank-a/simulate
-    └── adaptador Horizonte ─HTTP→ /bank-b/simulate
+    ├── adaptador Bradesco ─────────HTTP──→ /bank-a/simulate
+    └── adaptador Banco Santander ──HTTP──→ /bank-b/simulate
     │ valida e normaliza respostas
     ▼
 Resultados: aprovado / reprovado / indisponível
@@ -68,7 +68,7 @@ Resultados: aprovado / reprovado / indisponível
 | `packages/contracts` | Schemas Zod e tipos compartilhados entre frontend e backend                  |
 
 - TypeScript com modo estrito; Zod valida entrada e dados recebidos por HTTP em tempo de execução.
-- O Banco Aurora responde com um booleano e valores em centavos. O Horizonte usa decisões textuais e valores em reais. Os adaptadores validam e convertem ambos para o mesmo modelo.
+- O mock do Bradesco responde com um booleano e valores em centavos. O mock do Banco Santander usa decisões textuais e valores em reais. Os adaptadores validam e convertem ambos para o mesmo modelo.
 - Chamadas paralelas, com cancelamento após **3 segundos por banco**, inclusive se o corpo da resposta travar. Falha de rede, erro HTTP ou contrato inválido afeta somente o respectivo resultado.
 - Reprovação é uma decisão do simulador. Indisponibilidade é uma falha técnica; a aplicação não confunde as duas.
 - CPF e CNPJ são strings, com normalização e validação de dígitos verificadores. CNPJ aceita letras nas primeiras 12 posições conforme o [algoritmo da Receita Federal](https://www.gov.br/receitafederal/pt-br/centrais-de-conteudo/publicacoes/documentos-tecnicos/cnpj). Isso valida a estrutura, não comprova identidade ou cadastro.
@@ -126,10 +126,10 @@ A resposta contém `requestId` e dois `results`, cada um com `bankId`, `bankName
 
 ## Condições financeiras ilustrativas
 
-| Banco fictício | Taxa mensal | Limite ilustrativo da parcela |
-| -------------- | ----------: | ----------------------------: |
-| Aurora         |        1,8% |      25% do salário informado |
-| Horizonte      |        2,2% |      30% do salário informado |
+| Banco simulado  | Taxa mensal | Limite ilustrativo da parcela |
+| --------------- | ----------: | ----------------------------: |
+| Bradesco        |        1,8% |      25% do salário informado |
+| Banco Santander |        2,2% |      30% do salário informado |
 
 Os mocks usam a fórmula Price `P × i / (1 − (1 + i)^−n)`, onde P é o principal, i a taxa mensal decimal e n o prazo. A parcela é arredondada ao centavo; o total é a parcela arredondada multiplicada pelo prazo. Pode haver diferença de centavos em relação a uma tabela de amortização com ajuste na última parcela.
 
@@ -139,11 +139,11 @@ Esses percentuais são regras inventadas para demonstrar decisões diferentes. N
 
 Com os exemplos padrão (R$ 15 mil em 24 meses):
 
-| Salário mensal | Aurora    | Horizonte |
-| -------------- | --------- | --------- |
-| R$ 5.000       | Aprovado  | Aprovado  |
-| R$ 2.800       | Reprovado | Aprovado  |
-| R$ 1.000       | Reprovado | Reprovado |
+| Salário mensal | Bradesco  | Banco Santander |
+| -------------- | --------- | --------------- |
+| R$ 5.000       | Aprovado  | Aprovado        |
+| R$ 2.800       | Reprovado | Aprovado        |
+| R$ 1.000       | Reprovado | Reprovado       |
 
 Para falhas técnicas, pare a execução anterior e configure os mocks. Valores aceitos para `BANK_A_MODE` e `BANK_B_MODE`: `normal`, `error` (HTTP 503), `timeout` (10 segundos), `malformed` (JSON fora do contrato).
 

@@ -382,7 +382,8 @@ export function App() {
                   ))}
                   <p className="result-footnote">
                     Taxas e critérios fictícios. Os valores não incluem impostos, tarifas ou
-                    seguros. Não representam uma oferta real.
+                    seguros. Não representam uma oferta real. Demonstração sem vínculo com os
+                    bancos.
                   </p>
                   <span className="request-id">Consulta {result.requestId.slice(0, 8)}</span>
                 </div>
