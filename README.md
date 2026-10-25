@@ -6,20 +6,18 @@ Simulador educacional de empréstimo consignado: uma interface em português con
 
 **Demonstração:** [consigna-mais.vercel.app](https://consigna-mais.vercel.app). Para testar, clique em **Usar dados de exemplo** e depois em **Comparar condições**.
 
-Para entender e apresentar a implementação, leia o [guia de estudo do projeto](docs/entenda-o-projeto.md) e o [roteiro de apresentação](docs/roteiro.md).
-
 ## Atendimento ao desafio
 
-| Pedido do desafio                               | Onde está atendido                                                                   |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Nome, e-mail, CPF, salário e CNPJ do empregador | Formulário e validação compartilhada; também solicitamos valor e prazo               |
-| Pelo menos dois bancos simulados                | Aurora e Horizonte, consultados por HTTP com contratos diferentes                    |
-| Interpretar e consolidar respostas              | Adaptadores da API convertem decisões e unidades monetárias para um modelo comum     |
-| Resultado individual compreensível              | Cartão por banco: aprovado com condições, reprovado com motivo ou indisponível       |
-| Instruções de execução                          | Fluxos npm e Docker opcional abaixo; Node 24 e portas documentados                   |
-| Decisões técnicas e limitações                  | Seções de arquitetura, justificativas e limitações conscientes                       |
-| Propostas implementadas e planejadas            | Problema, Proposta e Por quê; próximas melhorias em ordem de prioridade              |
-| Uso consciente de IA                            | Assistência declarada; exemplos, testes e guia para compreensão e revisão pelo autor |
+| Pedido do desafio                               | Onde está atendido                                                                     |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Nome, e-mail, CPF, salário e CNPJ do empregador | Formulário e validação compartilhada; também solicitamos valor e prazo                 |
+| Pelo menos dois bancos simulados                | Aurora e Horizonte, consultados por HTTP com contratos diferentes                      |
+| Interpretar e consolidar respostas              | Adaptadores da API convertem decisões e unidades monetárias para um modelo comum       |
+| Resultado individual compreensível              | Cartão por banco: aprovado com condições, reprovado com motivo ou indisponível         |
+| Instruções de execução                          | Fluxos npm e Docker opcional abaixo; Node 24 e portas documentados                     |
+| Decisões técnicas e limitações                  | Seções de arquitetura, justificativas e limitações conscientes                         |
+| Propostas implementadas e planejadas            | Problema, Proposta e Por quê; próximas melhorias em ordem de prioridade                |
+| Uso consciente de IA                            | Assistência declarada; decisões, exemplos e testes para revisão e compreensão do autor |
 
 ## Executar sem Docker
 
@@ -193,9 +191,7 @@ npm test       # suíte de testes
 
 Os testes de integração sobem os bancos em portas efêmeras e fazem chamadas HTTP reais. Cobrem adaptação de contratos/unidades monetárias, validação, decisões divergentes, paralelismo, timeout, falha parcial e total, resposta malformada e ausência de dados pessoais nos logs. Os testes de regras cobrem dígitos verificadores, entradas inválidas e cálculo/arredondamento das parcelas.
 
-O GitHub Actions executa a mesma verificação em Node 24 a cada push e pull request. Consulte [o roteiro de revisão](docs/roteiro.md) para a verificação manual e preparação da apresentação.
-
-O [registro de validação](docs/validacao.md) descreve as verificações realizadas, evidências de smartphone/desktop e limites da revisão.
+O GitHub Actions executa a mesma verificação em Node 24 a cada push e pull request. A revisão manual incluiu larguras de 320, 390, 430, 768 e 1440 px, navegação por teclado, validação do formulário, aprovações, reprovações e falhas parcial e total. A validação responsiva usou emulação de viewport; não substitui testes em aparelhos físicos.
 
 A suíte também verifica a entrada serverless, as chamadas HTTP entre rotas do mesmo deployment e o isolamento do segredo de automação. A interface adapta formulário e resultados para uma coluna em smartphones, usa campos de 16 px para evitar zoom automático no iOS e mantém controles de toque com pelo menos 44 px.
 

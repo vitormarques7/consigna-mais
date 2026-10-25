@@ -17,7 +17,7 @@
     "test": "npm run build -w @consigna/contracts && vitest run",
     "lint": "eslint apps packages api deploy eslint.config.js",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
-    "format": "prettier --write apps packages api deploy docs README.md package.json tsconfig*.json vercel.json eslint.config.js compose.yaml .github .prettierrc.json"
+    "format": "prettier --write apps packages api deploy README.md package.json tsconfig*.json vercel.json eslint.config.js compose.yaml .github .prettierrc.json"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
