@@ -46,18 +46,6 @@ docker compose down
 
 A primeira execução baixa dependências e imagens, portanto exige internet. Depois da instalação, a lógica funciona localmente. A fonte visual usa Google Fonts com fontes locais de fallback caso esteja offline.
 
-## Deploy na Vercel
-
-Importe este repositório como **um único projeto**, usando a branch de produção `main` e **Root Directory na raiz do repositório** (não `apps/web`). O arquivo `vercel.json` configura Vite, instalação `npm ci`, build `npm run build` e saída `apps/web/dist`. Selecione **Node.js 24.x** nas configurações do projeto.
-
-O frontend é estático e `/api/*` é atendido por uma função Node.js que reutiliza a API Express e os mocks em `/api/mock-banks`. A função não abre uma porta. Os adaptadores continuam consultando os dois bancos por HTTP, agora no endereço do próprio deployment. Não é necessário publicar três projetos nem executar Docker na Vercel.
-
-Por padrão, não configure `BANK_BASE_URL`: a aplicação usa `https://<VERCEL_URL>/api/mock-banks`, com a variável de sistema fornecida pela Vercel. As variáveis `BANK_A_MODE`, `BANK_B_MODE` e `BANK_TIMEOUT_MS` continuam opcionais. Para demonstrar falhas, use um deployment de Preview e restaure os modos para `normal` antes da avaliação.
-
-Se o endereço interno do deployment estiver protegido, crie um segredo em **Settings → Deployment Protection → Protection Bypass for Automation**, selecionando-o para preencher `VERCEL_AUTOMATION_BYPASS_SECRET`, e faça um novo deploy. O servidor envia esse segredo nas consultas internas apenas quando o destino é a origem do próprio deployment. Ele não é enviado ao frontend, incluído nos logs ou encaminhado para um `BANK_BASE_URL` externo. Isso também se aplica a um deployment de produção cujo endereço gerado esteja protegido, mesmo que o domínio público da aplicação abra normalmente. Consulte a [documentação de proteção de deployments](https://vercel.com/docs/deployment-protection/methods-to-bypass-deployment-protection/protection-bypass-automation).
-
-Após publicar, confira `/api/health`, o preenchimento por exemplo e a simulação. Verifique também que o avaliador consegue abrir a URL de produção sem entrar na sua conta. A URL acima foi conferida com dados fictícios; o registro de validação detalha os cenários exercitados.
-
 ## Arquitetura e decisões
 
 ```text
