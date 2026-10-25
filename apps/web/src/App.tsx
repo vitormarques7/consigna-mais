@@ -216,7 +216,6 @@ export function App() {
               avaliaria sua solicitação.
             </p>
             <div className="hero-benefits">
-              <Sparkles size={18} />
               <span>Gratuito</span>
               <i /> <span>Sem compromisso</span>
               <i />

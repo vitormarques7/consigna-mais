@@ -186,9 +186,6 @@ h1 em {
   font-weight: 700;
   margin-top: 29px;
 }
-.hero-benefits svg {
-  color: var(--purple);
-}
 .hero-benefits i {
   width: 4px;
   height: 4px;
